@@ -13,17 +13,16 @@
                 {% for message in form.text.errors %}
                 <div class="flash">{{ message }}</div>
                 {% endfor %}
-
+                <h2 class="form-signin-heading">
+                    <strong>{{ question.text }}</strong>
+                </h2>
                 <form action="{{ url_for('write_answer', question_id=question.id) }}" method=post>
                     {{ form.hidden_tag() }}
 
-                    <div class="form-group">
-                        <p class="required">{{ form.text.label }}{{ form.text }}</p>
-                    </div>
+                    <p class="required">{{ form.text.label }}{{ form.text }}</p>
 
-                    <div id="form-submit-block">
-                        {{ form.submit }}
-                    </div>
+
+                    {{ form.submit }}
                 </form>
             </div>
         </div>

@@ -2,9 +2,6 @@ from flask.ext.wtf import Form
 from wtforms import TextField, StringField, BooleanField, SelectField, IntegerField, SubmitField, ValidationError
 from wtforms.validators import Required
 
-from models import User, Question, Answer
-
-
 class QuestionForm(Form):
     text = TextField("Your question:", validators = [Required("Please enter your question.")])
     submit = SubmitField("Send")

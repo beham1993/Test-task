@@ -1,20 +1,9 @@
 # -*- coding: utf-8 -*-
-from flask import Flask, session, request, flash, url_for, redirect, render_template, abort ,g
+from flask import Flask, session, request, flash, url_for, redirect, render_template, abort ,g, make_response
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from app import app, db, login_manager
 from forms import QuestionForm, AnswerForm
 from models import User, Question, Answer
-
-
-from datetime import date
-import md5
-
-from flask import render_template, flash, request, redirect, url_for, abort
-from flask.ext.login import (login_user, login_required, logout_user,
-                             current_user)
-from flask.ext.mail import Message
-
-
 
 
 
@@ -27,6 +16,7 @@ def before_request():
     g.user = current_user
 
 
+#головна сторінка
 @app.route('/')
 @app.route('/index')
 def index():
@@ -39,7 +29,7 @@ def index():
                            questions = questions)
 
 
-
+#функція реєстрації користувачів
 @app.route('/register' , methods=['GET','POST'])
 def register():
     if request.method == 'GET':
@@ -51,7 +41,7 @@ def register():
     return redirect(url_for('login'))
 
 
-
+#функція авторизації користувачів
 @app.route('/login',methods=['GET','POST'])
 def login():
     if request.method == 'GET':
@@ -67,7 +57,7 @@ def login():
     return redirect(request.args.get('next') or url_for('index'))
 
 
-
+#функція виходу користувачів
 @app.route('/logout')
 @login_required
 def logout():
@@ -75,7 +65,7 @@ def logout():
     return redirect(url_for('index'))
 
 
-
+#функція додати питання
 @app.route('/question', methods=['GET', 'POST'])
 def question():
     form = QuestionForm()
@@ -97,14 +87,13 @@ def question():
         return render_template('question.html', form=form)
 
 
-
+#вибрати об’єкт за id та користувача або повернути 404
 def _get_user_object_or_404(model, object_id, user, code=404):
-    ''' get an object by id and owner user or raise an abort '''
     result = model.query.filter_by(id=object_id).first()
     return result or abort(code)
 
 
-
+#функція додає відповідь на питання
 @app.route('/answer/<int:question_id>/', methods=['GET', 'POST'])
 @login_required
 def write_answer(question_id):
@@ -129,15 +118,15 @@ def write_answer(question_id):
         return render_template('answer.html', form=form, question=question)
 
 
-
+#функція перегляду відповідей для неавторизованих користувачів
 @app.route('/view_answer/<int:question_id>/')
 def view_answers(question_id):
-    question = Question.query.filter_by(id=question_id).all()
+    question = Question.query.get(question_id)
     answers = Answer.query.filter_by(question_id=question_id).all()
     return render_template('view_answer.html', answers=answers, question=question)
 
 
-
+#функція перегляду відповідей для авторизованих користувачів
 @app.route('/questions/<int:question_id>/')
 @login_required
 def question_answers(question_id):
@@ -146,8 +135,22 @@ def question_answers(question_id):
     return render_template('answer_list.html', question=question, answers=answers)
 
 
-@app.route('/answer/<int:answer_like>/')
+
+#функція додавання лайк за відповідь
+@app.route('/answer/<int:question_id>/<int:answer_id>/', methods=['GET', 'POST'])
 @login_required
-def add_like(answer_like):
-    return None
+def add_like(question_id, answer_id):
+    question = _get_user_object_or_404(Question, question_id, current_user)
+    answers = Answer.query.filter_by(question_id=question.id).all()
+    answer = Answer.query.get(answer_id)
+    if str(current_user)+str(answer_id) in session:
+        pass
+    else:
+        answer.like+=1
+        db.session.add(answer)
+        db.session.commit()
+    resp = make_response(render_template('add_like.html', question=question, answer=answer, answers=answers))
+    session[(str(current_user)+str(answer_id))] = resp.set_cookie(str(current_user)+str(answer_id))
+    return resp
+
 

@@ -16,11 +16,7 @@
 
                 <form action="{{ url_for('question') }}" method=post>
                     {{ form.hidden_tag() }}
-
-                    {{ form.text.label }}
-                    {{ form.text }}
-
-
+                    <p class="required">{{ form.text.label }}{{ form.text }}</p>
 
                     {{ form.submit }}
                 </form>

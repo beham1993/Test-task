@@ -8,17 +8,17 @@
                 <div class="intro-text">
                     <h2 class="form-signin-heading"><strong>{{ question.text }}</strong></h2>
                     {% if answers %}
-                        {% for answer in answers %}
-                        <ul>
-                            <li>{{ answer.text }} ( {{ answer.user.username }} ) Likes: {{ answer.like }} <a href="{{ url_for('add_like', question_id=question.id, answer_id=answer.id) }}">+1</a></li>
-                        </ul>
-                        {% endfor %}
+                    {% for answer in answers %}
+                    <ul>
+                        <li>{{ answer.text }} ( {{ answer.user.username }} ) Likes: {{ answer.like }} <a href="{{ url_for('add_like', question_id=question.id, answer_id=answer.id) }}">+1</a></li>
+                    </ul>
+                    {% endfor %}
                     {% else %}
                     <p>You can answer the first</p>
                     {% endif %}
                 </div>
                 {% if g.user.is_authenticated()%}
-                    <a href="{{ url_for('write_answer', question_id=question.id) }}" class="btn btn-default" id="form-submit-btn">New answer</a>
+                <a href="{{ url_for('write_answer', question_id=question.id) }}" class="btn btn-default" id="form-submit-btn">New answer</a>
                 {% endif %}
             </div>
         </div>
