@@ -35,7 +35,7 @@
                 <li><a href="{{ url_for('index') }}">Home</a></li>
                 {% if g.user.is_authenticated()%}
                 <li><a href="{{ url_for('question') }}">Add Question</a></li>
-                <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                <li><a href="{{ url_for('logout') }}">Log out</a></li>
                 {% endif %}
                 {% if not g.user.is_authenticated()%}
                 <li><a href="{{ url_for('login') }}">Login</a></li>
