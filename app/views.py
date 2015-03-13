@@ -4,6 +4,7 @@ from flask.ext.login import login_user, logout_user, current_user, login_require
 from app import app, db, login_manager
 from forms import QuestionForm, AnswerForm
 from models import User, Question, Answer
+from config import POSTS_PER_PAGE
 
 
 
@@ -17,16 +18,21 @@ def before_request():
 
 
 #головна сторінка
-@app.route('/')
-@app.route('/index')
-def index():
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/index', methods=['GET', 'POST'])
+@app.route('/index/<int:page>', methods=['GET', 'POST'])
+def index(page=1):
     user = g.user
-    questions = db.session.query(Question).all()
+    question_obj = db.session.query(Question).all()
+    questions = Question.query.paginate(page, POSTS_PER_PAGE, False)
+    num_question = len(question_obj)/POSTS_PER_PAGE+2
 
     return render_template('index.html',
                            title = 'Home',
                            user = user,
-                           questions = questions)
+                           questions = questions,
+                           question_obj = question_obj,
+                           num_question = num_question)
 
 
 #функція реєстрації користувачів

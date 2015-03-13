@@ -25,7 +25,7 @@
                     <strong>Questions</strong>
                 </h2>
                 <hr>
-                {% for question in questions %}
+                {% for question in questions.items %}
                 {% if g.user.is_authenticated()%}
                 <ul class="intro-text">
                     <li><a href="{{ url_for('question_answers', question_id=question.id) }}">{{ question.text }} ( {{ question.user.username }} )</a></li>
@@ -37,6 +37,19 @@
                 </ul>
                 {% endif %}
                 {% endfor %}
+
+                <div class="intro-text text-center">
+                    {% if questions.has_prev %}<a href="{{ url_for('index', page = questions.prev_num) }}"><< </a>{% else %}<< {% endif %}
+                    {% for i in range(1, num_question) %}
+                        {% if i == questions.page %}
+                            <strong><a href="{{ url_for('index', page = i) }}">{{ i }}</a></strong>
+                        {% else %}
+                            <a href="{{ url_for('index', page = i) }}">{{ i }}</a>
+                        {% endif %}
+                    {% endfor %}
+                    {% if questions.has_next %}<a href="{{ url_for('index', page = questions.next_num) }}"> >></a>{% else %} >>{% endif %}
+                </div>
+
             </div>
         </div>
     </div>
