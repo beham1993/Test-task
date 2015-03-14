@@ -16,10 +16,15 @@
 
                 <form action="{{ url_for('question') }}" method=post>
                     {{ form.hidden_tag() }}
-                    <p class="required">{{ form.text.label }}{{ form.text }}</p>
-
-                    {{ form.submit }}
+                    <div id="form-group-question">
+                    <p class="required">{{ form.text.label(class="register-label") }}{{ form.text(class="form-control-question", placeholder="Enter Question") }}</p>
+                    </div>
+                    <div id="form-submit-block">
+                    {{ form.submit(class="btn btn-default", id="form-submit-btn") }}
+                    </div>
                 </form>
+
+
             </div>
         </div>
     </div>

@@ -24,8 +24,8 @@ def before_request():
 def index(page=1):
     user = g.user
     question_obj = db.session.query(Question).all()
-    questions = Question.query.paginate(page, POSTS_PER_PAGE, False)
-    num_question = len(question_obj)/POSTS_PER_PAGE+2
+    questions = Question.query.order_by('-id').paginate(page, POSTS_PER_PAGE, False)
+    num_question = (len(question_obj)-1)/POSTS_PER_PAGE+2
 
     return render_template('index.html',
                            title = 'Home',
@@ -118,7 +118,7 @@ def write_answer(question_id):
             )
             db.session.add(answer)
             db.session.commit()
-            return redirect(url_for('index'))
+            return redirect(url_for('question_answers', question_id=question_id))
 
     elif request.method == 'GET':
         return render_template('answer.html', form=form, question=question)
